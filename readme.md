@@ -12,9 +12,7 @@ To use in your project, add `getset` as a dependency to your `Cargo.toml` file:
 getset = { git = "https://github.com/m7andrew/getset" }
 ```
 
-## Derive Getters & Setters
-
-Getters and setters are useful when you want to control the API of a struct without exposing its fields directly. To keep things simple, the `GetSet` derive macro uses only two attributes: `#[get]` and `#[set]`.
+## Getters & Setters
 
 ```rust
 #[derive(Debug, GetSet)]
@@ -26,29 +24,21 @@ pub struct Movie {
 }
 ```
 
-- `#[set]` derives both a getter and setter function for the associated field.
-- `#[get]` derives only a getter function for the associated field. 
-
-By default, a field without either attribute derives nothing.
-
 ```rust
 movie.year()         // Get
 movie.set_year(2004) // Set
 ```
 
-Setter functions can also be chained together:
+Getters and setters are useful when you want to control the API of a struct without exposing its fields directly. To keep things simple, the `GetSet` derive macro uses just two attributes:
 
-```rust
-movie
-  .set_year(2004)
-  .set_runtime(126)
-```
+- `#[set]` derives both a getter and setter function for the associated field.
+- `#[get]` derives only a getter function for the associated field. 
+
+By default, a field without either attribute derives nothing.
 
 If you need a setter without a getter, then it's best to implement the function manually. Typically in this situation, some amount of custom logic or validation is needed.
 
-## Derive Builder
-
-The builder pattern is not a replacement for named arguments, but rather, it's a useful pattern when you need to construct a type that possesses several optional or default values.
+## Builder
 
 ```rust
 #[derive(Debug, Default, Builder)]
@@ -60,12 +50,6 @@ pub struct Movie {
 }
 ```
 
-The `Builder` macro derives a builder type that wraps the original. The name of the builder type is the name of the original appended by "Builder".
-
-Unlike many other builder libraries, the implementation of one or more constructors is left to you. This provides flexibility, letting you write constructors that require certain inputs or preform custom logic.
-
-That said, you can often just wrap the default constructor:
-
 ```rust
 impl Movie {
   pub fn new() -> MovieBuilder {
@@ -73,6 +57,7 @@ impl Movie {
   }
 }
 ```
+
 ```rust
 let movie = Movie::new()
   .title   ("Lord of the Rings".into())
@@ -80,6 +65,14 @@ let movie = Movie::new()
   .runtime (228)
   .build   ();
 ```
+
+The builder pattern is not a replacement for named arguments, but rather, it's a useful pattern when you need to construct a type that possesses several optional or default values.
+
+The `Builder` macro derives a builder type that wraps the original. The name of the builder type is the name of the original appended by "Builder".
+
+Unlike many other builder libraries, the implementation of one or more constructors is left to you. This provides flexibility, letting you write constructors that require certain inputs or preform custom logic.
+
+That said, you can often just wrap the default constructor.
 
 ## Customize Your Builder
 
