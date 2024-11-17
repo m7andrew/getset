@@ -1,0 +1,16 @@
+[package]
+name        = "getset"
+version     = "0.1.0"
+edition     = "2021"
+license     = "MIT"
+description = "A minimal and opinionated library for deriving getters, setters, and builders."
+keywords    = ["getters", "setters", "builder", "macros", "derive"]
+authors     = ["Andrew McLemore"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn         = { version = "2.0", features = ["full"] }
+quote       = { version = "1.0" }
+proc-macro2 = { version = "1.0" }
