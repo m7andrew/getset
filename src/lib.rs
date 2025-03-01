@@ -10,7 +10,7 @@ use quote       :: { quote, format_ident };
 //  Derive Macros
 //-----------------------------------------------------------------------------
 
-#[proc_macro_derive(GetSet, attributes(get, set))]
+#[proc_macro_derive(GetSet, attributes(get, set, all))]
 pub fn derive_get_set(input: TokenStream) -> TokenStream {
 
 	let ast           = parse_macro_input!(input as DeriveInput);
@@ -24,12 +24,14 @@ pub fn derive_get_set(input: TokenStream) -> TokenStream {
 
 	let getters       = fields.named.iter().map(derive_getter_function);
 	let setters       = fields.named.iter().map(derive_setter_function);
+	let mutgets       = fields.named.iter().map(derive_mutget_function);
 
 	TokenStream::from(quote! {
 		#[allow(dead_code)]
 		impl #impl_generics #struct_name #type_generics #where_clause {
 			#(#getters)*
 			#(#setters)*
+			#(#mutgets)*
 		}
 	})
 }
@@ -82,8 +84,9 @@ fn derive_builder_function(field: &Field) -> TokenStream2 {
 
 fn derive_getter_function(field: &Field) -> TokenStream2 {
 
-	if !has_attribute(&field, "get")
-	&& !has_attribute(&field, "set") { return quote!() }
+	if !has_attribute(&field, "all")
+	&& !has_attribute(&field, "set")
+	&& !has_attribute(&field, "get") { return quote!() }
 
 	let field_name = &field.ident.as_ref().unwrap();
 	let field_type = &field.ty;
@@ -97,7 +100,8 @@ fn derive_getter_function(field: &Field) -> TokenStream2 {
 
 fn derive_setter_function(field: &Field) -> TokenStream2 {
 
-	if !has_attribute(&field, "set") { return quote!() }
+	if !has_attribute(&field, "all")
+	&& !has_attribute(&field, "set") { return quote!() }
 
 	let field_name = &field.ident.as_ref().unwrap();
 	let field_type = &field.ty;
@@ -107,6 +111,21 @@ fn derive_setter_function(field: &Field) -> TokenStream2 {
 		pub fn #func_name(&mut self, value: #field_type) -> &mut Self {
 			self.#field_name = value;
 			self
+		}
+	}
+}
+
+fn derive_mutget_function(field: &Field) -> TokenStream2 {
+
+	if !has_attribute(&field, "all") { return quote!() }
+
+	let field_name = &field.ident.as_ref().unwrap();
+	let field_type = &field.ty;
+	let func_name  = format_ident!("mut_{field_name}");
+
+	quote! {
+		pub fn #func_name(&mut self) -> &mut #field_type {
+			&mut self.#field_name
 		}
 	}
 }

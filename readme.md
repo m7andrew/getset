@@ -18,7 +18,7 @@ getset = { git = "https://github.com/m7andrew/getset" }
 #[derive(Debug, GetSet)]
 pub struct Movie {
   #[get] title:   String,
-  #[set] year:    u32,
+  #[all] year:    u32,
   #[set] runtime: u32,
   #[set] genres:  Vec<String>,
 }
@@ -26,13 +26,15 @@ pub struct Movie {
 
 ```rust
 movie.year()         // Get
+movie.mut_year()     // Mutable Get
 movie.set_year(2004) // Set
 ```
 
-Getters and setters are useful when you want to control the API of a struct without exposing its fields directly. To keep things simple, the `GetSet` derive macro uses just two attributes:
+Getters and setters are useful when you want to control the API of a struct without exposing its fields directly. To keep things simple, the `GetSet` derive macro uses three separate attributes of increasing permissions:
 
-- `#[set]` derives both a getter and setter function for the associated field.
-- `#[get]` derives only a getter function for the associated field. 
+- `#[get]` derives a "get" function. 
+- `#[set]` derives a "get" and "set" function.
+- `#[all]` derives a "get", "set", and "mutable get" function.
 
 By default, a field without either attribute derives nothing.
 
