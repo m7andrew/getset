@@ -36,7 +36,7 @@ Getters and setters are useful when you want to control the API of a struct with
 - `#[set]` derives a "get" and "set" function.
 - `#[all]` derives a "get", "set", and "mutable get" function.
 
-By default, a field without either attribute derives nothing.
+By default, a field without any of these attributes derives nothing.
 
 If you need a setter without a getter, then it's best to implement the function manually. Typically in this situation, some amount of custom logic or validation is needed.
 
