@@ -75,6 +75,7 @@ fn derive_builder_function(field: &Field) -> TokenStream2 {
 	let field_type = &field.ty;
 
 	quote! {
+		#[inline(always)]
 		pub fn #field_name(mut self, value: #field_type) -> Self {
 			self.0.#field_name = value;
 			self
@@ -92,6 +93,7 @@ fn derive_getter_function(field: &Field) -> TokenStream2 {
 	let field_type = &field.ty;
 
 	quote! {
+		#[inline(always)]
 		pub fn #field_name(&self) -> &#field_type {
 			&self.#field_name
 		}
@@ -108,6 +110,7 @@ fn derive_setter_function(field: &Field) -> TokenStream2 {
 	let func_name  = format_ident!("set_{field_name}");
 
 	quote! {
+		#[inline(always)]
 		pub fn #func_name(&mut self, value: #field_type) -> &mut Self {
 			self.#field_name = value;
 			self
@@ -124,6 +127,7 @@ fn derive_mutget_function(field: &Field) -> TokenStream2 {
 	let func_name  = format_ident!("mut_{field_name}");
 
 	quote! {
+		#[inline(always)]
 		pub fn #func_name(&mut self) -> &mut #field_type {
 			&mut self.#field_name
 		}
